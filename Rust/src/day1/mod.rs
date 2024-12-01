@@ -1,8 +1,8 @@
 use std::fs;
 
 pub fn solve1(input: &String) {
-    let mut first_col: Vec<i32> = [].to_vec();
-    let mut second_col: Vec<i32> = [].to_vec();
+    let mut first_col: Vec<i32> = Vec::new();
+    let mut second_col: Vec<i32> = Vec::new();
 
     let lines: Vec<&str> = input.lines().collect();
     for line in &lines {
@@ -29,8 +29,8 @@ pub fn solve1(input: &String) {
 }
 
 pub fn solve2(input: &String) {
-    let mut first_col: Vec<i32> = [].to_vec();
-    let mut second_col: Vec<i32> = [].to_vec();
+    let mut first_col: Vec<i32> = Vec::new();
+    let mut second_col: Vec<i32> = Vec::new();
 
     for line in input.lines() {
         let split_line: Vec<&str> = line.split_whitespace().collect();
