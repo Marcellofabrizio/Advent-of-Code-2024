@@ -4,8 +4,7 @@ pub fn solve1(input: &String) {
     let mut first_col: Vec<i32> = Vec::new();
     let mut second_col: Vec<i32> = Vec::new();
 
-    let lines: Vec<&str> = input.lines().collect();
-    for line in &lines {
+    for line in input.lines() {
         let split_line: Vec<&str> = line.split_whitespace().collect(); 
         if let (Some(first), Some(second)) = (split_line.get(0), split_line.get(1)) {
             first_col.push(first.parse().unwrap_or_else(|_| panic!("Invalid integer: {}", first)));
