@@ -1,9 +1,9 @@
 use std::{fs, result, fmt::format};
-mod day1;
+mod day3;
 
 fn main() {
     println!("Solving AOC 2024\n");
-    let input = fs::read_to_string("day1/data2").expect("File not found");
-    // day1::solve1(&input);
-    day1::solve2(&input);
+    let input = fs::read_to_string("day3/data").expect("File not found");
+    day3::solve1(&input);
+    day3::solve2(&input);
 }
