@@ -53,7 +53,7 @@ pub fn solve1(input: &String) {
                 // }
 
                 sum += check_xmas(&matrix, row, col);
-            } 
+            }
         }
     }
 
@@ -92,11 +92,11 @@ fn check_xmas(matrix: &Vec<Vec<char>>, row: usize, col: usize) -> i32 {
 }
 
 pub fn solve2(input: &String) {
-      /*
-      M * S
-      * A *
-      S * M
-      */
+    /*
+    M * S
+    * A *
+    S * M
+    */
 
     let rows = input.lines().count();
     let cols = input.lines().next().unwrap().chars().count();
@@ -109,7 +109,7 @@ pub fn solve2(input: &String) {
         for col in 0..cols {
             if matrix[row][col] == 'A' {
                 sum += check_x_mas(&matrix, row, col);
-            } 
+            }
         }
     }
 
@@ -117,28 +117,39 @@ pub fn solve2(input: &String) {
 }
 
 fn check_x_mas(matrix: &Vec<Vec<char>>, row: usize, col: usize) -> i32 {
-  let directions = [
-    (-1,-1),
-    (0,  0),
-    (1, 1),
-  ];
+    let directions = [[(-1, -1), (0, 0), (1, 1)], [(1, -1), (0, 0), (-1, 1)]];
 
-  let mut occurence = 0;
+    let mut mas_occurence = 0;
+    let mut occurence = 0;
+    let allowed: Vec<char> = vec!['M', 'A', 'S'];
 
-  for &(dr, dc) in &directions {
-      let mut word = String::new();
-      for i in 0..3 {
-          let r = row as isize + dr - i;
-          let c = col as isize + dc - i;
-          if r < 0 || c < 0 || r >= matrix.len() as isize || c >= matrix[0].len() as isize {
-              break;
-          }
-          word.push(matrix[r as usize][c as usize]);
+    for &dg in &directions {
+        let mut word = String::new();
+        for &(dr, dc) in &dg {
+            // for i in (0..3).rev() {
+            let r = row as isize + dr;
+            let c = col as isize + dc;
+            if r < 0 || c < 0 || r >= matrix.len() as isize || c >= matrix[0].len() as isize {
+                break;
+            }
+
+            word.push(matrix[r as usize][c as usize]);
+
+            // if allowed.contains(&matrix[r as usize][c as usize]) {
+            //     println!("{} at {} {}", word, r, c);
+            // }
+
+            // }
         }
-      println!("{}", word);
-      if word == "MAS" {
-          occurence += 1;
-      }
-  }
-  occurence
+
+        if word == "MAS" || word == "SAM" {
+            mas_occurence += 1;
+        }
+    }
+
+    if mas_occurence == 2 {
+        return 1;
+    }
+
+    0
 }
