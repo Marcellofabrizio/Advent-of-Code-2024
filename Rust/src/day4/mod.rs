@@ -119,9 +119,8 @@ pub fn solve2(input: &String) {
 fn check_x_mas(matrix: &Vec<Vec<char>>, row: usize, col: usize) -> i32 {
   let directions = [
     (-1,-1),
-    (1,  1),
-    (-1, 1),
-    (1, -1),
+    (0,  0),
+    (1, 1),
   ];
 
   let mut occurence = 0;
