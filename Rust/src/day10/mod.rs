@@ -13,7 +13,6 @@ pub fn solve1(input: &str) {
     for row in 0..rows {
         for col in 0..cols {
             let mut visited: HashSet<(usize, usize)> = HashSet::new();
-
             if matrix[row][col] == 0 {
                 sum += dfs(1, &matrix, (row, col), &mut visited);
             }
@@ -32,12 +31,11 @@ pub fn dfs(
     let dirs = [(-1, 0), (1, 0), (0, -1), (0, 1)];
 
     if part == 1 {
+        if visited.contains(&node) {
+            return 0;
+        }
 
-      if visited.contains(&node) {
-        return 0;
-      }
-      
-      visited.insert(node);
+        visited.insert(node);
     }
 
     if matrix[node.0][node.1] == 9 {
@@ -53,7 +51,12 @@ pub fn dfs(
         if let Some(r_i) = matrix.get(comp_row as usize) {
             if let Some(&c_i) = r_i.get(comp_col as usize) {
                 if c_i as i32 - matrix[node.0][node.1] as i32 == 1 {
-                    paths += dfs(part, matrix, (comp_row as usize, comp_col as usize), visited);
+                    paths += dfs(
+                        part,
+                        matrix,
+                        (comp_row as usize, comp_col as usize),
+                        visited,
+                    );
                 }
             } else {
                 continue;
