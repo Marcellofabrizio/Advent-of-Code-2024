@@ -6,55 +6,36 @@ pub fn solve1(input: &str) {
     let (rows, cols) = (matrix.len(), matrix[0].len());
 
     let mut guard_pos: (isize, isize) = get_guard_pos(&matrix, rows, cols);
+    let mut guard_dir = 0;
 
-    let mut guard_dir: (isize, isize) = (-1, 0);
-
-    let mut out_of_bounds = false;
+    let dirs: [(isize, isize); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
     let mut visited: HashSet<(isize, isize)> = HashSet::new();
     visited.insert(guard_pos);
 
-    while !out_of_bounds {
+    loop {
         matrix[guard_pos.0 as usize][guard_pos.1 as usize] = 'X';
 
         let next_step = (
-            guard_pos.0 as isize + guard_dir.0,
-            guard_pos.1 as isize + guard_dir.1,
+            guard_pos.0 + dirs[guard_dir].0,
+            guard_pos.1 + dirs[guard_dir].1,
         );
+
         let (r_n, c_n) = next_step;
-        println!("Next Step {:?}", (next_step.0, next_step.1));
 
-        if let Some(row) = matrix.get(r_n as usize) {
-            if let Some(&ch) = row.get(c_n as usize) {
-                if ch == '#' {
-                    guard_dir = turn_right(guard_dir);
-                }
-
-                visited.insert(guard_pos);
-
-                guard_pos = (
-                    guard_pos.0 as isize + guard_dir.0,
-                    guard_pos.1 as isize + guard_dir.1,
-                );
+        if (0 <= r_n && r_n < rows as isize) && (0 <= c_n && c_n < cols as isize) {
+            if matrix[r_n as usize][c_n as usize] == '#' {
+                guard_dir = (guard_dir + 1) % 4;
             } else {
-              visited.insert(guard_pos);
-              out_of_bounds = true;
+                guard_pos = (r_n, c_n);
+                visited.insert((guard_pos.0, guard_pos.1));
             }
         } else {
-            visited.insert(guard_pos);
-            out_of_bounds = true;
+            break;
         }
-
-        // for row in &matrix {
-        //     println!("{:?}", row)
-        // }
     }
 
     println!("{}", visited.len())
-}
-
-fn turn_right(direction: (isize, isize)) -> (isize, isize) {
-    (direction.1, -direction.0)
 }
 
 fn get_guard_pos(matrix: &Vec<Vec<char>>, rows: usize, cols: usize) -> (isize, isize) {
@@ -70,56 +51,78 @@ fn get_guard_pos(matrix: &Vec<Vec<char>>, rows: usize, cols: usize) -> (isize, i
 }
 
 pub fn solve2(input: &str) {
-  let mut matrix: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let matrix: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
-  let (rows, cols) = (matrix.len(), matrix[0].len());
+    let (rows, cols) = (matrix.len(), matrix[0].len());
 
-  let mut guard_pos: (isize, isize) = get_guard_pos(&matrix, rows, cols);
+    let mut guard_pos: (isize, isize) = get_guard_pos(&matrix, rows, cols);
+    let start_pos = guard_pos;
+    let mut guard_dir: usize = 0;
 
-  let mut guard_dir: (isize, isize) = (-1, 0);
+    let mut sum = 0;
 
-  let mut out_of_bounds = false;
+    let dirs: [(isize, isize); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
 
-  let mut visited: HashSet<(isize, isize)> = HashSet::new();
-  visited.insert(guard_pos);
+    let mut visited: HashSet<(usize, usize)> = HashSet::new();
 
-  while !out_of_bounds {
+    loop {
+        let next_step = (
+            guard_pos.0 as isize + dirs[guard_dir].0,
+            guard_pos.1 as isize + dirs[guard_dir].1,
+        );
 
-      let next_step = (
-          guard_pos.0 as isize + guard_dir.0,
-          guard_pos.1 as isize + guard_dir.1,
-      );
-      let (r_n, c_n) = next_step;
-      println!("Next Step {:?}", (next_step.0, next_step.1));
+        let (r_n, c_n) = next_step;
 
-      if let Some(row) = matrix.get(r_n as usize) {
-          if let Some(&ch) = row.get(c_n as usize) {
-              if ch == '#' {
-                  guard_dir = turn_right(guard_dir);
-                  matrix[guard_pos.0 as usize][guard_pos.1 as usize] = '+';
+        if (0 <= r_n && r_n < rows as isize) && (0 <= c_n && c_n < cols as isize) {
+            if matrix[r_n as usize][c_n as usize] == '#' {
+                guard_dir = (guard_dir + 1) % 4;
+            }
 
-              }
+            guard_pos = (
+                guard_pos.0 + dirs[guard_dir].0,
+                guard_pos.1 + dirs[guard_dir].1,
+            );
 
-              visited.insert(guard_pos);
+            visited.insert((guard_pos.0 as usize, guard_pos.1 as usize));
 
-              guard_pos = (
-                  guard_pos.0 as isize + guard_dir.0,
-                  guard_pos.1 as isize + guard_dir.1,
-              );
-          } else {
-            visited.insert(guard_pos);
-            out_of_bounds = true;
-          }
-      } else {
-          visited.insert(guard_pos);
-          out_of_bounds = true;
-      }
-
+            continue;
+        } else {
+            break;
+        }
     }
-    
-    for row in &matrix {
-        println!("{:?}", row)
+
+    for (o_r, o_c) in visited {
+        let (mut r, mut c) = start_pos;
+        let mut dir: usize = 0;
+        let mut visited_loop: HashSet<(isize, isize, usize)> = HashSet::new();
+
+        loop {
+            let dirs: [(isize, isize); 4] = [(-1, 0), (0, 1), (1, 0), (0, -1)];
+
+            if visited_loop.contains(&(r, c, dir)) {
+                sum += 1;
+                break;
+            }
+
+            visited_loop.insert((r, c, dir));
+
+            let r_n = r + dirs[dir].0;
+            let c_n = c + dirs[dir].1;
+
+            if (0 <= r_n && r_n < rows as isize) && (0 <= c_n && c_n < cols as isize) {
+                if matrix[r_n as usize][c_n as usize] == '#'
+                    || r_n == o_r as isize && c_n == o_c as isize
+                {
+                    dir = (dir + 1) % 4;
+                } else {
+                    r = r_n;
+                    c = c_n;
+                }
+            } else {
+                break;
+            }
+        }
     }
-  println!("{}", visited.len())
+
+    println!("{}", sum)
 }
-
